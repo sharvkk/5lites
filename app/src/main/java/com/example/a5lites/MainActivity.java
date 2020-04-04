@@ -2,6 +2,10 @@ package com.example.a5lites;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
+import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.DynamoDBEntry;
+import com.amazonaws.regions.Region;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -11,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,10 +30,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+
+import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document;
+
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
@@ -39,6 +51,10 @@ public class MainActivity extends Activity {
     LinearLayout outputLayout;
 //    Button bt1,bt2;
     ArrayList<BluetoothDevice> outputList;
+
+    private final String COGNITO_POOL_ID =  "ap-south-1:402f5cc9-0567-4261-bc92-768d44d79b08";
+    private final Region COGNITO_REGION =  Region.getRegion("ap-south-1");
+    private Context context;
 
 //    SharedPreferences pref = null;
 
@@ -65,15 +81,72 @@ public class MainActivity extends Activity {
 
         //Changes:
 
-        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(myReceiver, intentFilter);
-        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        this.registerReceiver(myReceiver, intentFilter);
-        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(myReceiver, intentFilter);
-        bluetoothAdapter.startDiscovery();
+//        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        this.registerReceiver(myReceiver, intentFilter);
+//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+//        this.registerReceiver(myReceiver, intentFilter);
+//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+//        this.registerReceiver(myReceiver, intentFilter);
+//        bluetoothAdapter.startDiscovery();
+//        getDatabase();
+        GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
+        try{
+            Document i = getAllItemsAsyncTask.execute("40:d4:40:example ahe").get();
+            Document embedded = (Document) i.get("embeddedEntry");
+            embedded.put("AnyNumber2", 1500);
+            System.out.println("Size: " + i.size());
 
 
+            Integer temp = new PutDataAsyncTask().execute(i).get();
+            System.out.println("Size: " + i.size() + " O/P: " + temp);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+//    public Document registerPing(String host, String dest, String timestamp) throws Exception{
+//        MainActivity.GetAllItemsAsyncTask getAllItemsAsyncTask = new MainActivity.GetAllItemsAsyncTask();
+//        Document document = getAllItemsAsyncTask.execute(host).get();
+//        Document doc = (Document) document.get(dest);
+//
+//
+//        embedded.put("AnyNumber2", 1500);
+//
+//        return document;
+//    }
+
+
+    private class GetAllItemsAsyncTask extends AsyncTask<String, Void, com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document> {
+        @Override
+        protected com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document doInBackground(String... params) {
+            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(MainActivity.this);
+            return databaseAccess.getItem(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document documents) {
+        }
+
+    }
+
+    private class PutDataAsyncTask extends AsyncTask<com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Document... params) {
+            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(MainActivity.this);
+            databaseAccess.putItem(params[0]);
+            System.out.println("In background!!!");
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+        }
+
+    }
+
+
+    private void getDatabase(){
     }
 
 //    public void startBackground(View view){
