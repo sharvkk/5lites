@@ -101,10 +101,11 @@ public class MainActivity extends Activity {
 //            document.put("MACid", "d4:63:c6:77:92:52");
 //            document.put("status", "negative");
 //            document.put("phone", "12345678");
-//            Document ping = new Document();
+//            Document ping = new Document(), allPings = new Document();
 //            ping.put("counter", 1);
 //            ping.put("timestamp", "04-04-2020-20:05");
-//            document.put("newmac", ping);
+//            allPings.put("newmac", ping);
+//            document.put("Pings", all);
 ////            System.out.println("Size: " + i.size());
 //            Integer temp = new PutDataAsyncTask().execute(document).get();
 //            System.out.println("O/P: " + temp);
@@ -113,8 +114,6 @@ public class MainActivity extends Activity {
 //        }
 
     }
-
-
 
 
 
