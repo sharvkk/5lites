@@ -33,14 +33,14 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
 
-    static final String CHAT_PREFS = "ChatPrefs";
+//    static final String CHAT_PREFS = "ChatPrefs";
 
     //Changes:
     LinearLayout outputLayout;
-    Button bt1,bt2;
+//    Button bt1,bt2;
     ArrayList<BluetoothDevice> outputList;
 
-    SharedPreferences pref = null;
+//    SharedPreferences pref = null;
 
     BluetoothAdapter bluetoothAdapter = null;
     @Override
@@ -50,11 +50,11 @@ public class MainActivity extends Activity {
 
         //Mi kelele changes:
 
-        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
+//        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
 
         outputLayout = findViewById(R.id.myOutputLayout);
-        bt1 = findViewById(R.id.bt1);
-        bt2 = findViewById(R.id.bt2);
+//        bt1 = findViewById(R.id.bt1);
+//        bt2 = findViewById(R.id.bt2);
         outputList = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -65,99 +65,99 @@ public class MainActivity extends Activity {
 
         //Changes:
 
-//        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        bluetoothAdapter.startDiscovery();
+        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(myReceiver, intentFilter);
+        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        this.registerReceiver(myReceiver, intentFilter);
+        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(myReceiver, intentFilter);
+        bluetoothAdapter.startDiscovery();
 
 
     }
 
-    public void startBackground(View view){
-        SharedPreferences.Editor edit = pref.edit();
-        edit.commit();
-        BluetoothIntentService.setEditor(edit);
-        BluetoothIntentService.startDiscovery(getBaseContext());
-        Toast.makeText(this, "Background process started!", Toast.LENGTH_SHORT).show();
-    }
-
-    public void stopBackground(View view){
-        Toast.makeText(this, "Background process stopped!", Toast.LENGTH_SHORT).show();
-        bt1.setVisibility(View.GONE);
-        bt2.setVisibility(View.GONE);
-        int totalDevices = pref.getInt("totalDevices", 0);
-        if(totalDevices == 0){
-            System.out.println("Total devices are 0!! :(");
-        }
-        for(int i=0;i<totalDevices;i++){
-            View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
-            TextView name = newView.findViewById(R.id.deviceName);
-            TextView add = newView.findViewById(R.id.devicceAddress);
-            name.setText(pref.getString(("name"+i), "name"));
-            add.setText(pref.getString(("address"+i), "address"));
-            outputLayout.addView(newView);
-        }
-        outputLayout.setVisibility(View.VISIBLE);
-        BluetoothIntentService.stopDiscovery(getBaseContext());
-
-    }
-
+//    public void startBackground(View view){
+//        SharedPreferences.Editor edit = pref.edit();
+//        edit.commit();
+//        BluetoothIntentService.setEditor(edit);
+//        BluetoothIntentService.startDiscovery(getBaseContext());
+//        Toast.makeText(this, "Background process started!", Toast.LENGTH_SHORT).show();
+//    }
 //
-//    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Message msg = Message.obtain();
-//            String action = intent.getAction();
-//            Log.d("here in list", "onrecieve");
-//            System.out.println("here in onreceieve");
-//            if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
-//                System.out.println("\n\nDiscovery for nearby devicces started!\n\n");
-//            }
-//
-//            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-//                bluetoothAdapter.startDiscovery();
-//            }
-//
-//            if(BluetoothDevice.ACTION_FOUND.equals(action)){
-//                Toast.makeText(context, "ACTION_FOUND", Toast.LENGTH_SHORT).show();
-//
-//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//
-//                if(outputList.size()<1)
-//                {
-//                    View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
-//                    TextView name = newView.findViewById(R.id.deviceName);
-//                    TextView add = newView.findViewById(R.id.devicceAddress);
-//                    name.setText(device.getName());
-//                    add.setText(device.getAddress());
-//                    outputLayout.addView(newView);
-//                    outputList.add(device);
-//                }
-//                else
-//                {
-//                    boolean flag = true;    // flag to indicate that particular device is already in the arlist or not
-//                    for(int i = 0; i<outputList.size();i++)
-//                    {
-//                        if(device.getAddress().equals(outputList.get(i).getAddress()))
-//                        {
-//                            flag = false;
-//                        }
-//                    }
-//                    if(flag)
-//                    {
-//                        View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
-//                        TextView name = newView.findViewById(R.id.deviceName);
-//                        TextView add = newView.findViewById(R.id.devicceAddress);
-//                        name.setText(device.getName());
-//                        add.setText(device.getAddress());
-//                        outputList.add(device);
-//                        outputLayout.addView(newView);
-//                    }
-//                }
-//            }
+//    public void stopBackground(View view){
+//        Toast.makeText(this, "Background process stopped!", Toast.LENGTH_SHORT).show();
+//        bt1.setVisibility(View.GONE);
+//        bt2.setVisibility(View.GONE);
+//        int totalDevices = pref.getInt("totalDevices", 0);
+//        if(totalDevices == 0){
+//            System.out.println("Total devices are 0!! :(");
 //        }
-//    };
+//        for(int i=0;i<totalDevices;i++){
+//            View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
+//            TextView name = newView.findViewById(R.id.deviceName);
+//            TextView add = newView.findViewById(R.id.devicceAddress);
+//            name.setText(pref.getString(("name"+i), "name"));
+//            add.setText(pref.getString(("address"+i), "address"));
+//            outputLayout.addView(newView);
+//        }
+//        outputLayout.setVisibility(View.VISIBLE);
+//        BluetoothIntentService.stopDiscovery(getBaseContext());
+//
+//    }
+
+
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Message msg = Message.obtain();
+            String action = intent.getAction();
+            Log.d("here in list", "onrecieve");
+            System.out.println("here in onreceieve");
+            if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
+                System.out.println("\n\nDiscovery for nearby devicces started!\n\n");
+            }
+
+            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                bluetoothAdapter.startDiscovery();
+            }
+
+            if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                Toast.makeText(context, "ACTION_FOUND", Toast.LENGTH_SHORT).show();
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                if(outputList.size()<1)
+                {
+                    View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
+                    TextView name = newView.findViewById(R.id.deviceName);
+                    TextView add = newView.findViewById(R.id.devicceAddress);
+                    name.setText(device.getName());
+                    add.setText(device.getAddress());
+                    outputLayout.addView(newView);
+                    outputList.add(device);
+                }
+                else
+                {
+                    boolean flag = true;    // flag to indicate that particular device is already in the arlist or not
+                    for(int i = 0; i<outputList.size();i++)
+                    {
+                        if(device.getAddress().equals(outputList.get(i).getAddress()))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if(flag)
+                    {
+                        View newView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_card, null);
+                        TextView name = newView.findViewById(R.id.deviceName);
+                        TextView add = newView.findViewById(R.id.devicceAddress);
+                        name.setText(device.getName());
+                        add.setText(device.getAddress());
+                        outputList.add(device);
+                        outputLayout.addView(newView);
+                    }
+                }
+            }
+        }
+    };
 }

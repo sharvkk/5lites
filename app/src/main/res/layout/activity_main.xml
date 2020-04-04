@@ -9,7 +9,7 @@
         android:id="@+id/myOutputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:layout_width="match_parent"
@@ -18,18 +18,5 @@
             android:text="People around you: "/>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/bt1"
-        android:text="START BACKGROUND"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startBackground"/>
-    <Button
-        android:id="@+id/bt2"
-        android:text="STOP BACKGROUND"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="stopBackground"/>
 
 </LinearLayout>
