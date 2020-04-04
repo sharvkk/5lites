@@ -91,30 +91,26 @@ public class MainActivity extends Activity {
 //        getDatabase();
         GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
         try{
-            Document i = getAllItemsAsyncTask.execute("40:d4:40:example ahe").get();
-            Document embedded = (Document) i.get("embeddedEntry");
-            embedded.put("AnyNumber2", 1500);
-            System.out.println("Size: " + i.size());
-
-
-            Integer temp = new PutDataAsyncTask().execute(i).get();
-            System.out.println("Size: " + i.size() + " O/P: " + temp);
+//            Document i = getAllItemsAsyncTask.execute("d4:63:c6:77:92:52").get();
+            Document document = new Document();
+            document.put("MACid", "d4:63:c6:77:92:52");
+            document.put("status", "negative");
+            document.put("phone", "12345678");
+            Document ping = new Document();
+            ping.put("counter", 1);
+            ping.put("timestamp", "04-04-2020-20:05");
+            document.put("newmac", ping);
+//            System.out.println("Size: " + i.size());
+            Integer temp = new PutDataAsyncTask().execute(document).get();
+            System.out.println("O/P: " + temp);
         }catch (Exception e){
             e.printStackTrace();
         }
 
     }
 
-//    public Document registerPing(String host, String dest, String timestamp) throws Exception{
-//        MainActivity.GetAllItemsAsyncTask getAllItemsAsyncTask = new MainActivity.GetAllItemsAsyncTask();
-//        Document document = getAllItemsAsyncTask.execute(host).get();
-//        Document doc = (Document) document.get(dest);
-//
-//
-//        embedded.put("AnyNumber2", 1500);
-//
-//        return document;
-//    }
+
+
 
 
     private class GetAllItemsAsyncTask extends AsyncTask<String, Void, com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document> {
