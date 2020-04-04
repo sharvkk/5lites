@@ -53,7 +53,8 @@ public class MainActivity extends Activity {
     LinearLayout outputLayout;
 //    Button bt1,bt2;
     ArrayList<BluetoothDevice> outputList;
-
+    Button mButton;
+    Boolean flag;
     private final String COGNITO_POOL_ID =  "ap-south-1:402f5cc9-0567-4261-bc92-768d44d79b08";
     private final Region COGNITO_REGION =  Region.getRegion("ap-south-1");
     private Context context;
@@ -72,12 +73,28 @@ public class MainActivity extends Activity {
         //Mi kelele changes:
 
 //        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
-
         outputLayout = findViewById(R.id.myOutputLayout);
 //        bt1 = findViewById(R.id.bt1);
 //        bt2 = findViewById(R.id.bt2);
         outputList = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mButton = findViewById(R.id.sbutton);
+        flag = false;
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(flag == false){
+
+                    mButton.setText("Stop services");
+                    flag = true;
+                }
+                if(flag == true){
+
+                    mButton.setText("Start services");
+                    flag = false;
+                }
+            }
+        });
     }
     @Override
     protected void onStart() {
