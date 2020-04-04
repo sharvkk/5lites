@@ -38,6 +38,7 @@ public class DatabaseAccess {
         return result;
     }
 
+
     public void putItem(Document doc){
         dbTable.putItem(doc);
 //        dbTable.

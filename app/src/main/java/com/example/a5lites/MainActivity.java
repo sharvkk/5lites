@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.DynamoDBEntry;
+import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.DynamoDBList;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import android.app.Activity;
@@ -30,13 +31,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.mobileconnectors.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-
 import com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document;
 
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -55,11 +51,8 @@ public class MainActivity extends Activity {
     ArrayList<BluetoothDevice> outputList;
     Button mButton;
     Boolean flag;
-    private final String COGNITO_POOL_ID =  "ap-south-1:402f5cc9-0567-4261-bc92-768d44d79b08";
-    private final Region COGNITO_REGION =  Region.getRegion("ap-south-1");
     private Context context;
 
-//    SharedPreferences pref = null;
 
     BluetoothAdapter bluetoothAdapter = null;
     @Override
@@ -72,10 +65,8 @@ public class MainActivity extends Activity {
         System.out.println(found + "\nmac " + mymac);
         //Mi kelele changes:
 
-//        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
+//        SharedPreferences pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
         outputLayout = findViewById(R.id.myOutputLayout);
-//        bt1 = findViewById(R.id.bt1);
-//        bt2 = findViewById(R.id.bt2);
         outputList = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mButton = findViewById(R.id.sbutton);
@@ -94,6 +85,9 @@ public class MainActivity extends Activity {
                     bluetoothAdapter.startDiscovery();
                     flag = true;
                 }else {
+                    outputList = null;
+                    outputList = new ArrayList<>();
+                    outputLayout.removeAllViews();
                     MainActivity.this.unregisterReceiver(myReceiver);
                     mButton.setText("Start services");
                     flag = false;
@@ -101,32 +95,34 @@ public class MainActivity extends Activity {
             }
         });
     }
-    @Override
-    protected void onStart() {
-        // TODO Auto-generated method stub
-        super.onStart();
 
-        //Changes:
-
-//        getDatabase();
-//        GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
-//        try{
-////            Document i = getAllItemsAsyncTask.execute("d4:63:c6:77:92:52").get();
-//            Document document = new Document();
-//            document.put("MACid", "d4:63:c6:77:92:52");
-//            document.put("status", "negative");
-//            document.put("phone", "12345678");
-//            Document ping = new Document(), allPings = new Document();
-//            ping.put("counter", 1);
-//            ping.put("timestamp", "04-04-2020-20:05");
-//            allPings.put("newmac", ping);
-//            document.put("Pings", all);
-////            System.out.println("Size: " + i.size());
-//            Integer temp = new PutDataAsyncTask().execute(document).get();
-//            System.out.println("O/P: " + temp);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+    private void addPing(String hostMAC, String ping, String timestamp){
+        try{
+            Document hostDoc = new GetAllItemsAsyncTask().execute(hostMAC).get();
+            Document allPingList, foundPing;
+            if(hostDoc.containsKey("Pings")){
+                allPingList = hostDoc.get("Pings").asDocument();
+                if(!allPingList.containsKey(ping)){
+                    foundPing = new Document();
+                    foundPing.put("no_pings", 1);
+                    foundPing.put("timestamp", timestamp);
+                }else {
+                    foundPing = allPingList.get(ping).asDocument();
+                    int count = foundPing.get("no_pings").asInt();
+                    foundPing.put("no_pings", (count+1));
+                }
+            }else{
+                allPingList = new Document();
+                foundPing = new Document();
+                foundPing.put("no_pings", 1);
+                foundPing.put("timestamp", timestamp);
+            }
+            allPingList.put(ping, foundPing);
+            hostDoc.put("Pings",allPingList);
+            new PutDataAsyncTask().execute(hostDoc);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -146,6 +142,7 @@ public class MainActivity extends Activity {
     }
 
     private class PutDataAsyncTask extends AsyncTask<com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document, Void, Integer> {
+
         @Override
         protected Integer doInBackground(Document... params) {
             DatabaseAccess databaseAccess = DatabaseAccess.getInstance(MainActivity.this);
@@ -159,6 +156,25 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    private class GetFromDoc extends AsyncTask<Document, Void, com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document> {
+        private String getParameter;
+
+        public GetFromDoc(String getParameter){
+            this.getParameter = getParameter;
+        }
+
+        @Override
+        protected com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document doInBackground(Document... params) {
+            return params[0].get(getParameter).asDocument();
+        }
+
+        @Override
+        protected void onPostExecute(com.amazonaws.mobileconnectors.dynamodbv2.document.datatype.Document documents) {
+        }
+
+    }
+
 
 
     private void getDatabase(){
@@ -243,6 +259,7 @@ public class MainActivity extends Activity {
                         add.setText(device.getAddress());
                         outputList.add(device);
                         outputLayout.addView(newView);
+                        addPing("d4:63:c6:77:92:52",device.getAddress(),"udya");
                     }
                 }
             }
