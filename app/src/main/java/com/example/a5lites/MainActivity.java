@@ -32,9 +32,11 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-
-//    static final String CHAT_PREFS = "ChatPrefs";
-
+    private SharedPreferences prefs;
+    private String PHONE_NO = "Phone";
+    private String MAC = "Mac_add";
+    static final String LOG_CHECK_KEY = "logged";
+    static final String CREDENTIALS = "Credentials";
     //Changes:
     LinearLayout outputLayout;
 //    Button bt1,bt2;
@@ -47,7 +49,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        prefs = getSharedPreferences(CREDENTIALS,Context.MODE_PRIVATE);
+        String found =  prefs.getString(PHONE_NO,"not saved");
+        String mymac = prefs.getString(MAC,"no mac");
+        System.out.println(found + "\nmac " + mymac);
         //Mi kelele changes:
 
 //        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
