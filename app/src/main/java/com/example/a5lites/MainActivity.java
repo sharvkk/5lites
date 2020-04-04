@@ -44,9 +44,11 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-
-//    static final String CHAT_PREFS = "ChatPrefs";
-
+    private SharedPreferences prefs;
+    private String PHONE_NO = "Phone";
+    private String MAC = "Mac_add";
+    static final String LOG_CHECK_KEY = "logged";
+    static final String CREDENTIALS = "Credentials";
     //Changes:
     LinearLayout outputLayout;
 //    Button bt1,bt2;
@@ -63,7 +65,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        prefs = getSharedPreferences(CREDENTIALS,Context.MODE_PRIVATE);
+        String found =  prefs.getString(PHONE_NO,"not saved");
+        String mymac = prefs.getString(MAC,"no mac");
+        System.out.println(found + "\nmac " + mymac);
         //Mi kelele changes:
 
 //        pref = getSharedPreferences(CHAT_PREFS,MODE_PRIVATE);
@@ -81,31 +86,31 @@ public class MainActivity extends Activity {
 
         //Changes:
 
-//        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-//        this.registerReceiver(myReceiver, intentFilter);
-//        bluetoothAdapter.startDiscovery();
+        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(myReceiver, intentFilter);
+        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        this.registerReceiver(myReceiver, intentFilter);
+        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(myReceiver, intentFilter);
+        bluetoothAdapter.startDiscovery();
 //        getDatabase();
-        GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
-        try{
-//            Document i = getAllItemsAsyncTask.execute("d4:63:c6:77:92:52").get();
-            Document document = new Document();
-            document.put("MACid", "d4:63:c6:77:92:52");
-            document.put("status", "negative");
-            document.put("phone", "12345678");
-            Document ping = new Document();
-            ping.put("counter", 1);
-            ping.put("timestamp", "04-04-2020-20:05");
-            document.put("newmac", ping);
-//            System.out.println("Size: " + i.size());
-            Integer temp = new PutDataAsyncTask().execute(document).get();
-            System.out.println("O/P: " + temp);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
+//        try{
+////            Document i = getAllItemsAsyncTask.execute("d4:63:c6:77:92:52").get();
+//            Document document = new Document();
+//            document.put("MACid", "d4:63:c6:77:92:52");
+//            document.put("status", "negative");
+//            document.put("phone", "12345678");
+//            Document ping = new Document();
+//            ping.put("counter", 1);
+//            ping.put("timestamp", "04-04-2020-20:05");
+//            document.put("newmac", ping);
+////            System.out.println("Size: " + i.size());
+//            Integer temp = new PutDataAsyncTask().execute(document).get();
+//            System.out.println("O/P: " + temp);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -229,4 +234,10 @@ public class MainActivity extends Activity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(myReceiver);
+    }
 }
