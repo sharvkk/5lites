@@ -83,13 +83,18 @@ public class MainActivity extends Activity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(flag == false){
-
+                if(!flag){
                     mButton.setText("Stop services");
+                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    MainActivity.this.registerReceiver(myReceiver, intentFilter);
+                    intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+                    MainActivity.this.registerReceiver(myReceiver, intentFilter);
+                    intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                    MainActivity.this.registerReceiver(myReceiver, intentFilter);
+                    bluetoothAdapter.startDiscovery();
                     flag = true;
-                }
-                if(flag == true){
-
+                }else {
+                    MainActivity.this.unregisterReceiver(myReceiver);
                     mButton.setText("Start services");
                     flag = false;
                 }
@@ -103,13 +108,6 @@ public class MainActivity extends Activity {
 
         //Changes:
 
-        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(myReceiver, intentFilter);
-        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        this.registerReceiver(myReceiver, intentFilter);
-        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(myReceiver, intentFilter);
-        bluetoothAdapter.startDiscovery();
 //        getDatabase();
 //        GetAllItemsAsyncTask getAllItemsAsyncTask = new GetAllItemsAsyncTask();
 //        try{
@@ -254,6 +252,5 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(myReceiver);
     }
 }
