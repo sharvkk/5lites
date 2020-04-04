@@ -14,5 +14,4 @@ public class RegisterNode {
         return doc;
     }
 
-
 }
